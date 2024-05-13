@@ -5,17 +5,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
     <title>
         {% block title %} {% endblock %}
     </title>
 </head>
 <body>
-    <img src="{% static 'page/img/unnamed.png' %}" alt="" width="200" height="200">
-    <h1>KOU HOSPITAL</h1>
+    {% include 'partials/_navbar.html' %}
 
-    <ul>
-        <li><a href="index">HomePage</a></li>
-    </ul>
     {% block content %} {% endblock %}
+
+    <script src="{% static 'js/bootstrap.js' %}"></script>
 </body>
 </html>
