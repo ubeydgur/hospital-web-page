@@ -36,16 +36,15 @@ def run_custom_query(request):
 
 def login_process(request):
     if request.method == 'POST':
-        email = request.POST.get('email')
+        id = request.POST.get('id')
         password = request.POST.get('password')
 
         # SQL sorgusu ile kullanıcıyı bul
         with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM patients WHERE firstname = %s", [email])
+            cursor.execute("SELECT * FROM patients WHERE patientID = %s", [id])
             row = cursor.fetchone()
 
         if row is not None:
-            print(password)
             if password == row[7]:
                 # Kullanıcı doğrulandı
                 return render(request, 'page/index.html')
@@ -56,5 +55,32 @@ def login_process(request):
     else:
         return HttpResponse("Bu URL sadece POST istekleriyle çalışır.")
 
+def create_user(request):
+    if request.method == 'POST':
+        # Formdan gelen verileri al
+        id = request.POST.get('id')
+        firstname = request.POST.get('firstname')
+        surname = request.POST.get('surname')
+        birth = request.POST.get('birth')
+        gender = request.POST.get('gender')
+        phone = request.POST.get('phone')
+        address = request.POST.get('address')
+        password = request.POST.get('password')
+
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM patients WHERE patientID = %s", [id])
+            row = cursor.fetchone()
+
+        if row is None:
+            with connection.cursor() as cursor:
+                cursor.execute("INSERT INTO patients VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+                               [id, firstname, surname, birth, gender, phone, address, password])
+
+            # Başarıyla eklendi mesajı döndür
+            return HttpResponse("Yeni kullanıcı başarıyla eklendi!")
+        else:
+            return HttpResponse("Bu ID zaten kullanımda!")
+    else:
+        return HttpResponse("Bu URL sadece POST istekleriyle çalışır.")
 
 

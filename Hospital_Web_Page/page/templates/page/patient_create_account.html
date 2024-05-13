@@ -8,26 +8,51 @@
 
 <h2>New Create Account</h2>
 
-<div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
-    <input class="input100" type="text" name="email" placeholder="Email">
-    <span class="focus-input100"></span>
-    <span class="symbol-input100">
-    <i class="fa fa-envelope" aria-hidden="true"></i>
-    </span>
-</div>
+<form method="post" action="{% url 'create_user' %}">
+    {% csrf_token %}
+    <div class="wrap-input100 validate-input">
+        <input class="input100" type="text" name="id" placeholder="TCKN">
+        <span class="focus-input100"></span>
+    </div>
 
-<div class="wrap-input100 validate-input" data-validate="Password is required">
-    <input class="input100" type="password" name="pass" placeholder="Password">
-    <span class="focus-input100"></span>
-    <span class="symbol-input100">
-    <i class="fa fa-lock" aria-hidden="true"></i>
-    </span>
-</div>
+    <div class="wrap-input100 validate-input">
+        <input class="input100" type="text" name="firstname" placeholder="First Name">
+        <span class="focus-input100"></span>
+    </div>
 
-<div class="container-login100-form-btn">
-    <button type="button" class="login100-form-btn" name="fah" id="fah" value="fah">
-    Login
-    </button>
-</div>
+    <div class="wrap-input100 validate-input">
+        <input class="input100" type="text" name="surname" placeholder="Surname">
+        <span class="focus-input100"></span>
+    </div>
+
+    <div class="wrap-input100 validate-input">
+        <input class="input100" type="text" name="birth" placeholder="Birth">
+        <span class="focus-input100"></span>
+    </div>
+
+    <div class="wrap-input100 validate-input">
+        <input class="input100" type="text" name="gender" placeholder="Gender">
+        <span class="focus-input100"></span>
+    </div>
+
+    <div class="wrap-input100 validate-input">
+        <input class="input100" type="text" name="phone" placeholder="Phone">
+        <span class="focus-input100"></span>
+    </div>
+
+    <div class="wrap-input100 validate-input">
+        <input class="input100" type="text" name="address" placeholder="Address">
+        <span class="focus-input100"></span>
+    </div>
+
+    <div class="wrap-input100 validate-input">
+        <input class="input100" type="password" name="password" placeholder="Password">
+        <span class="focus-input100"></span>
+    </div>
+
+    <div class="container-login100-form-btn">
+        <button type="submit" class="btn btn-primary">Create User</button>
+    </div>
+</form>
 
 {% endblock %}
