@@ -1,12 +1,8 @@
 from django.http import HttpResponse
-from django.shortcuts import render
 from django.db import connection
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.models import User
 from django.http import JsonResponse
-from django.contrib.auth.hashers import check_password
-
-
+from django.shortcuts import render, redirect
+from django.contrib import messages
 
 
 def index(request):
@@ -34,7 +30,7 @@ def run_custom_query(request):
     # JSON olarak döndür
     return JsonResponse(data, safe=False)
 
-def login_process(request):
+def login_patient(request):
     if request.method == 'POST':
         id = request.POST.get('id')
         password = request.POST.get('password')
