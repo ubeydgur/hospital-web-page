@@ -48,7 +48,10 @@ c.execute("""CREATE TABLE report(
     FOREIGN KEY (patientID) REFERENCES patients(patientID)
     )""")
 '''
-#c.execute("INSERT INTO patients VALUES ('0', 'ubeyd', 'gur', '05.04.2003', 'M', '05511643357', 'address', '1')") # tabloya veri ekleme
+#c.execute("INSERT INTO patients VALUES ('1', 'onur', 'varol', '02.11.2001', 'M', '055090943357', 'address', '1')") # tabloya veri ekleme
+
+#c.execute("INSERT INTO admins VALUES ('0', '1')")
+
 
 #c.execute("PRAGMA table_info(patients)") # sütunları döndürür
 
