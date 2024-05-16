@@ -51,7 +51,78 @@ def login_patient(request):
     else:
         return HttpResponse("Bu URL sadece POST istekleriyle çalışır.")
 
-def create_user(request):
+def login_admin(request):
+    if request.method == 'POST':
+        id = request.POST.get('id')
+        password = request.POST.get('password')
+
+        # SQL sorgusu ile kullanıcıyı bul
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM admins WHERE adminID = %s", [id])
+            row = cursor.fetchone()
+
+        if row is not None:
+            if password == row[1]:
+                # Kullanıcı doğrulandı
+                return render(request, 'page/admin_index.html')
+            else:
+                return HttpResponse("Hatalı şifre.")
+        else:
+            return HttpResponse("Belirtilen e-posta adresine sahip bir kullanıcı bulunamadı.")
+    else:
+        return HttpResponse("Bu URL sadece POST istekleriyle çalışır.")
+
+def login_doctor(request):
+    if request.method == 'POST':
+        id = request.POST.get('id')
+        password = request.POST.get('password')
+
+        # SQL sorgusu ile kullanıcıyı bul
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM doctors WHERE doctorID = %s", [id])
+            row = cursor.fetchone()
+
+        if row is not None:
+            if password == row[5]:
+                # Kullanıcı doğrulandı
+                return render(request, 'page/doctor_index.html')
+            else:
+                return HttpResponse("Hatalı şifre.")
+        else:
+            return HttpResponse("Belirtilen e-posta adresine sahip bir kullanıcı bulunamadı.")
+    else:
+        return HttpResponse("Bu URL sadece POST istekleriyle çalışır.")
+
+
+def admin_index(request):
+    return render(request, 'page/admin_index.html')
+
+
+def table_patient(request):
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM patients")
+        books = cursor.fetchall()
+    return render(request, 'page/patient_table.html', {'books': books})
+
+def table_doctor(request):
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM doctors")
+        books = cursor.fetchall()
+    return render(request, 'page/doctor_table.html', {'books': books})
+
+def table_appointment(request):
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM appointment")
+        books = cursor.fetchall()
+    return render(request, 'page/appointment_table.html', {'books': books})
+
+def table_report(request):
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM report")
+        books = cursor.fetchall()
+    return render(request, 'page/report_table.html', {'books': books})
+
+def create_patient(request):
     if request.method == 'POST':
         # Formdan gelen verileri al
         id = request.POST.get('id')
