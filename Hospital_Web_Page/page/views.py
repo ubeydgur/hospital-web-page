@@ -43,7 +43,7 @@ def login_patient(request):
         if row is not None:
             if password == row[7]:
                 # Kullanıcı doğrulandı
-                return render(request, 'page/index.html')
+                return render(request, 'page/patient_index.html')
             else:
                 return HttpResponse("Hatalı şifre.")
         else:
