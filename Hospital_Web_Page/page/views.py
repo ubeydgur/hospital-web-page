@@ -150,4 +150,184 @@ def create_patient(request):
     else:
         return HttpResponse("Bu URL sadece POST istekleriyle çalışır.")
 
+def create_patient_admin(request):
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        id = request.POST.get('id')
+        firstname = request.POST.get('firstname')
+        surname = request.POST.get('surname')
+        birth = request.POST.get('birth')
+        gender = request.POST.get('gender')
+        phone = request.POST.get('phone')
+        address = request.POST.get('address')
+        password = request.POST.get('password')
 
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM patients WHERE patientID = %s", [id])
+            row = cursor.fetchone()
+
+        if action == 'create_user':
+            if row is None:
+                with connection.cursor() as cursor:
+                    cursor.execute("INSERT INTO patients VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+                                   [id, firstname, surname, birth, gender, phone, address, password])
+
+                return redirect ('table_patient')
+            else:
+                return HttpResponse("Bu ID zaten kullanımda!")
+
+        elif action == 'update_patient':
+            if row is None:
+                return HttpResponse("Bu ID bulunamadı")
+            else:
+                with connection.cursor() as cursor:
+                    cursor.execute("""UPDATE patients SET 
+                                    firstname = COALESCE(NULLIF(%s, ''), firstname),
+                                    surname = COALESCE(NULLIF(%s, ''), surname),
+                                    birth = COALESCE(NULLIF(%s, ''), birth),
+                                    gender = COALESCE(NULLIF(%s, ''), gender),
+                                    phone = COALESCE(NULLIF(%s, ''), phone),
+                                    address = COALESCE(NULLIF(%s, ''), address),
+                                    password = COALESCE(NULLIF(%s, ''), password) WHERE patientID = %s""",
+                                   [firstname, surname, birth, gender, phone, address, password, id])
+                return redirect('table_patient')
+
+def delete_patient(request):
+    if request.method == 'POST':
+        patient_id = request.POST.get('patient_id')
+        # SQL silme ifadesi
+        with connection.cursor() as cursor:
+            cursor.execute("DELETE FROM patients WHERE patientID = %s", [patient_id])
+        return redirect('table_patient')
+
+def create_report_admin(request):
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        id = request.POST.get('id')
+        date = request.POST.get('date')
+        link = request.POST.get('link')
+        tckn = request.POST.get('tckn')
+
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM report WHERE reportID = %s", [id])
+            row = cursor.fetchone()
+
+        if action == 'create_report':
+            if row is None:
+                with connection.cursor() as cursor:
+                    cursor.execute("INSERT INTO report VALUES (%s, %s, %s, %s)",
+                                   [id, date, link, tckn])
+
+                return redirect ('table_report')
+            else:
+                return HttpResponse("Bu ID zaten kullanımda!")
+
+        elif action == 'update_report':
+            if row is None:
+                return HttpResponse("Bu ID bulunamadı")
+            else:
+                with connection.cursor() as cursor:
+                    cursor.execute("""UPDATE report SET 
+                                    date = COALESCE(NULLIF(%s, ''), date),
+                                    link = COALESCE(NULLIF(%s, ''), link),
+                                    patientID = COALESCE(NULLIF(%s, ''), patientID) WHERE reportID = %s""",
+                                   [date, link, tckn, id])
+                return redirect('table_report')
+
+def delete_report(request):
+    if request.method == 'POST':
+        report_id = request.POST.get('report_id')
+        # SQL silme ifadesi
+        with connection.cursor() as cursor:
+            cursor.execute("DELETE FROM report WHERE reportID = %s", [report_id])
+        return redirect('table_report')
+
+def create_doctor_admin(request):
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        id = request.POST.get('id')
+        firstname = request.POST.get('firstname')
+        surname = request.POST.get('surname')
+        specialty = request.POST.get('specialty')
+        workplace = request.POST.get('workplace')
+        password = request.POST.get('password')
+
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM doctors WHERE doctorID = %s", [id])
+            row = cursor.fetchone()
+
+        if action == 'create_doctor':
+            if row is None:
+                with connection.cursor() as cursor:
+                    cursor.execute("INSERT INTO doctors VALUES (%s, %s, %s, %s, %s, %s)",
+                                   [id, firstname, surname, specialty, workplace, password])
+
+                return redirect ('table_doctor')
+            else:
+                return HttpResponse("Bu ID zaten kullanımda!")
+
+        elif action == 'update_doctor':
+            if row is None:
+                return HttpResponse("Bu ID bulunamadı")
+            else:
+                with connection.cursor() as cursor:
+                    cursor.execute("""UPDATE doctors SET 
+                                    firstname = COALESCE(NULLIF(%s, ''), firstname),
+                                    surname = COALESCE(NULLIF(%s, ''), surname),
+                                    specialty = COALESCE(NULLIF(%s, ''), specialty),
+                                    workplace = COALESCE(NULLIF(%s, ''), workplace),
+                                    password = COALESCE(NULLIF(%s, ''), password) WHERE doctorID = %s""",
+                                   [firstname, surname, specialty, workplace, password, id])
+                return redirect('table_doctor')
+
+def delete_doctor(request):
+    if request.method == 'POST':
+        doctor_id = request.POST.get('doctor_id')
+        # SQL silme ifadesi
+        with connection.cursor() as cursor:
+            cursor.execute("DELETE FROM doctors WHERE doctorID = %s", [doctor_id])
+        return redirect('table_doctor')
+
+def create_appointment_admin(request):
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        id = request.POST.get('id')
+        date = request.POST.get('date')
+        time = request.POST.get('time')
+        doctorid = request.POST.get('doctorid')
+        patientid = request.POST.get('patientid')
+
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM appointment WHERE appointmentID = %s", [id])
+            row = cursor.fetchone()
+
+        if action == 'create_appointment':
+            if row is None:
+                with connection.cursor() as cursor:
+                    cursor.execute("INSERT INTO appointment VALUES (%s, %s, %s, %s, %s)",
+                                   [id, date, time, doctorid, patientid])
+
+                return redirect ('table_appointment')
+            else:
+                return HttpResponse("Bu ID zaten kullanımda!")
+
+        elif action == 'update_appointment':
+            if row is None:
+                return HttpResponse("Bu ID bulunamadı")
+            else:
+                with connection.cursor() as cursor:
+                    cursor.execute("""UPDATE appointment SET 
+                                    date = COALESCE(NULLIF(%s, ''), date),
+                                    time = COALESCE(NULLIF(%s, ''), time),
+                                    doctorID = COALESCE(NULLIF(%s, ''), doctorID),
+                                    patientID = COALESCE(NULLIF(%s, ''), patientID) WHERE appointmentID = %s""",
+                                   [date, time, doctorid, patientid, id])
+                return redirect('table_appointment')
+
+def delete_appointment(request):
+    if request.method == 'POST':
+        appointment_id = request.POST.get('appointment_id')
+        # SQL silme ifadesi
+        with connection.cursor() as cursor:
+            cursor.execute("DELETE FROM appointment WHERE appointmentID = %s", [appointment_id])
+        return redirect('table_appointment')
