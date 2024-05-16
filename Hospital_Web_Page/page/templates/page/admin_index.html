@@ -2,9 +2,58 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            position: relative; /* Butonu konumlandırmak için relative yapıldı */
+        }
+        .top-left-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 5px 10px;
+            font-size: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none; /* Link alt çizgisini kaldırmak için */
+        }
+        .top-left-button:hover {
+            background-color: #0056b3;
+        }
+        .button-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .button-container button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .button-container a {
+            text-decoration: none; /* Link alt çizgisini kaldırmak için */
+        }
+    </style>
 </head>
 <body>
+    <!-- Sol üst köşedeki buton -->
+    <button class="top-left-button" onclick="location.href='/index'">BACK</button>
 
+    <div class="button-container">
+        <a href="{% url 'table_patient' %}"><button>Edit Patient Table</button></a>
+        <a href="{% url 'table_doctor' %}"><button>Edit Doctor Table</button></a>
+        <a href="{% url 'table_appointment' %}"><button>Edit Appointment Table</button></a>
+        <a href="{% url 'table_report' %}"><button>Edit Report Table</button></a>
+    </div>
 </body>
 </html>
