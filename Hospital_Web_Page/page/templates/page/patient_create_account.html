@@ -8,7 +8,7 @@
 
 <h2>New Create Account</h2>
 
-<form method="post" action="{% url 'create_user' %}">
+<form method="post" action="{% url 'create_patient' %}">
     {% csrf_token %}
     <div class="wrap-input100 validate-input">
         <input class="input100" type="text" name="id" placeholder="TCKN">
@@ -54,5 +54,6 @@
         <button type="submit" class="btn btn-primary">Create User</button>
     </div>
 </form>
+
 
 {% endblock %}
