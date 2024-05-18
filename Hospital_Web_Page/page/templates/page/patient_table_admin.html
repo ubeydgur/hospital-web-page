@@ -58,7 +58,7 @@
     </style>
 </head>
 <body>
-    <button class="top-left-button" onclick="location.href='/admin_index'">BACK</button>
+    <button class="top-left-button" onclick="location.href='/admin-index'">BACK</button>
 
     <div class="content">
         <div class="table-container">
@@ -90,7 +90,7 @@
                         <td>{{ book.7 }}</td>
 
                         <td>
-                            <form method="post" action="{% url 'delete_patient' %}">
+                            <form method="post" action="{% url 'delete_patient_admin' %}">
                                 {% csrf_token %}
                                 <input type="hidden" name="patient_id" value="{{ book.0 }}">
                                 <button type="submit" name="action" value="remove_patient" class="btn btn-secondary">Remove</button>
