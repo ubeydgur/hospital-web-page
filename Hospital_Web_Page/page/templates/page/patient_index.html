@@ -1,9 +1,57 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            position: relative; /* Butonu konumlandırmak için relative yapıldı */
+        }
+        .top-left-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 5px 10px;
+            font-size: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none; /* Link alt çizgisini kaldırmak için */
+        }
+        .top-left-button:hover {
+            background-color: #0056b3;
+        }
+        .button-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .button-container button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .button-container a {
+            text-decoration: none; /* Link alt çizgisini kaldırmak için */
+        }
+    </style>
+</head>
+<body>
+    <button class="top-left-button" onclick="location.href='/index'">BACK</button>
 
-{% block title %} Patient {% endblock %}
-
-{% block content %}
-
-
-
-{% endblock %}
+    <div class="button-container">
+        <a href="{% url 'appointment_table_patient' %}"><button>My Appointments</button></a>
+        <a href="{% url 'doctor_table_patient' %}"><button>Make Appointment</button></a>
+        <a href="{% url 'report_table_patient' %}"><button>My Reports</button></a>
+    </div>
+</body>
+</html>
