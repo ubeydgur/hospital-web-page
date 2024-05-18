@@ -2,9 +2,123 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Table</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        .top-left-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 5px 10px;
+            font-size: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .top-left-button:hover {
+            background-color: #0056b3;
+        }
+        .content {
+            display: flex;
+            width: 100%;
+        }
+        .table-container {
+            width: 75%; /* Ekranın 4'te 3'ü */
+            padding: 20px;
+        }
+        .update-system {
+            width: 25%; /* Kalan 4'te 1 */
+            padding: 20px;
+            border-left: 1px solid #ccc;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 <body>
+    <button class="top-left-button" onclick="location.href='/patient-index'">BACK</button>
 
+    <div class="content">
+        <div class="table-container">
+            <h1>Report Table</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>REPORT ID</th>
+                        <th>DATE</th>
+                        <th>LINK</th>
+                        <th>TCKN</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for book in books %}
+                    <tr>
+                        <td>{{ book.0 }}</td>
+                        <td>{{ book.1 }}</td>
+                        <td>{{ book.2 }}</td>
+                        <td>{{ book.3 }}</td>
+
+                        <td>
+                            <form method="post" action="{% url 'delete_report_patient' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="report_id" value="{{ book.0 }}">
+                                <button type="submit" name="action" value="remove_report" class="btn btn-secondary">Remove</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="update-system">
+            <h1>Update System</h1>
+            <!-- Güncelleme sistemi formu veya içeriği buraya gelecek -->
+            <form method="post" action="{% url 'create_report_patient' %}">
+                {% csrf_token %}
+                <div class="wrap-input100 validate-input">
+                    <input class="input100" type="text" name="id" placeholder="Report ID">
+                    <span class="focus-input100"></span>
+                </div>
+
+                <div class="wrap-input100 validate-input">
+                    <input class="input100" type="text" name="date" placeholder="Date">
+                    <span class="focus-input100"></span>
+                </div>
+
+                <div class="wrap-input100 validate-input">
+                    <input class="input100" type="text" name="link" placeholder="Link">
+                    <span class="focus-input100"></span>
+                </div>
+
+                <div class="container-login100-form-btn">
+                    <button type="submit" name="action" value="create_report" class="btn btn-primary">Create Report</button>
+                    <button type="submit" name="action" value="update_report" class="btn btn-secondary">Update Report</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
 </html>
