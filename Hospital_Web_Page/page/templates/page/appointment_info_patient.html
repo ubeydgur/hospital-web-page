@@ -2,9 +2,62 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ortada Yazı Girişi</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f2f2f2;
+        }
+        .center-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .input-container {
+            margin-bottom: 15px;
+        }
+        .input-container label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .input-container input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
+    <div class="center-container">
+        <form method="post" action="{% url 'create_appointment_patient' %}">
+            {% csrf_token %}
+            <div class="input-container">
+                <label for="input1">Appointment ID</label>
+                <input type="text" id="id" name="id">
+            </div>
+            <div class="input-container">
+                <label for="input2">Date</label>
+                <input type="text" id="date" name="date">
+            </div>
+            <div class="input-container">
+                <label for="input3">Time</label>
+                <input type="text" id="time" name="time">
+            </div>
 
+            <div class="container-login100-form-btn">
+                <button type="submit" name="action" value="create_appointment" class="btn btn-primary">Complete</button>
+            </div>
+        </form>
+    </div>
 </body>
 </html>
