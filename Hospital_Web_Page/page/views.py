@@ -16,19 +16,10 @@ def doctor(request):
 def admins(request):
     return render(request, 'page/admins.html')
 
-
 def patient_create(request):
     return render(request, 'page/patient_create_account.html')
 
-def run_custom_query(request):
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM patients;")
-        columns = [col[0] for col in cursor.description]  # Sütun adlarını al
-        rows = cursor.fetchall()
-        data = [dict(zip(columns, row)) for row in rows]  # Satırları sözlük olarak biçimlendir
 
-    # JSON olarak döndür
-    return JsonResponse(data, safe=False)
 
 def login_patient(request):
     if request.method == 'POST':
@@ -43,6 +34,8 @@ def login_patient(request):
         if row is not None:
             if password == row[7]:
                 # Kullanıcı doğrulandı
+                request.session['patient_id'] = id
+                request.session['appointment_id'] = id
                 return render(request, 'page/patient_index.html')
             else:
                 return HttpResponse("Hatalı şifre.")
@@ -94,33 +87,39 @@ def login_doctor(request):
         return HttpResponse("Bu URL sadece POST istekleriyle çalışır.")
 
 
+
 def admin_index(request):
     return render(request, 'page/admin_index.html')
 
+def patient_index(request):
+    return render(request, 'page/patient_index.html')
 
-def table_patient(request):
+def doctor_index(request):
+    return render(request, 'page/doctor_index.html')
+
+def patient_table_admin(request):
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM patients")
         books = cursor.fetchall()
-    return render(request, 'page/patient_table.html', {'books': books})
+    return render(request, 'page/patient_table_admin.html', {'books': books})
 
-def table_doctor(request):
+def doctor_table_admin(request):
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM doctors")
         books = cursor.fetchall()
-    return render(request, 'page/doctor_table.html', {'books': books})
+    return render(request, 'page/doctor_table_admin.html', {'books': books})
 
-def table_appointment(request):
+def appointment_table_admin(request):
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM appointment")
         books = cursor.fetchall()
-    return render(request, 'page/appointment_table.html', {'books': books})
+    return render(request, 'page/appointment_table_admin.html', {'books': books})
 
-def table_report(request):
+def report_table_admin(request):
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM report")
         books = cursor.fetchall()
-    return render(request, 'page/report_table.html', {'books': books})
+    return render(request, 'page/report_table_admin.html', {'books': books})
 
 def create_patient(request):
     if request.method == 'POST':
@@ -150,6 +149,7 @@ def create_patient(request):
     else:
         return HttpResponse("Bu URL sadece POST istekleriyle çalışır.")
 
+
 def create_patient_admin(request):
     if request.method == 'POST':
         action = request.POST.get('action')
@@ -172,7 +172,7 @@ def create_patient_admin(request):
                     cursor.execute("INSERT INTO patients VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
                                    [id, firstname, surname, birth, gender, phone, address, password])
 
-                return redirect ('table_patient')
+                return redirect ('patient_table_admin')
             else:
                 return HttpResponse("Bu ID zaten kullanımda!")
 
@@ -190,15 +190,16 @@ def create_patient_admin(request):
                                     address = COALESCE(NULLIF(%s, ''), address),
                                     password = COALESCE(NULLIF(%s, ''), password) WHERE patientID = %s""",
                                    [firstname, surname, birth, gender, phone, address, password, id])
-                return redirect('table_patient')
+                return redirect('patient_table_admin')
 
-def delete_patient(request):
+def delete_patient_admin(request):
     if request.method == 'POST':
         patient_id = request.POST.get('patient_id')
         # SQL silme ifadesi
         with connection.cursor() as cursor:
             cursor.execute("DELETE FROM patients WHERE patientID = %s", [patient_id])
-        return redirect('table_patient')
+        return redirect('patient_table_admin')
+
 
 def create_report_admin(request):
     if request.method == 'POST':
@@ -218,7 +219,7 @@ def create_report_admin(request):
                     cursor.execute("INSERT INTO report VALUES (%s, %s, %s, %s)",
                                    [id, date, link, tckn])
 
-                return redirect ('table_report')
+                return redirect ('report_table_admin')
             else:
                 return HttpResponse("Bu ID zaten kullanımda!")
 
@@ -232,15 +233,16 @@ def create_report_admin(request):
                                     link = COALESCE(NULLIF(%s, ''), link),
                                     patientID = COALESCE(NULLIF(%s, ''), patientID) WHERE reportID = %s""",
                                    [date, link, tckn, id])
-                return redirect('table_report')
+                return redirect('report_table_admin')
 
-def delete_report(request):
+def delete_report_admin(request):
     if request.method == 'POST':
         report_id = request.POST.get('report_id')
         # SQL silme ifadesi
         with connection.cursor() as cursor:
             cursor.execute("DELETE FROM report WHERE reportID = %s", [report_id])
-        return redirect('table_report')
+        return redirect('report_table_admin')
+
 
 def create_doctor_admin(request):
     if request.method == 'POST':
@@ -262,7 +264,7 @@ def create_doctor_admin(request):
                     cursor.execute("INSERT INTO doctors VALUES (%s, %s, %s, %s, %s, %s)",
                                    [id, firstname, surname, specialty, workplace, password])
 
-                return redirect ('table_doctor')
+                return redirect ('doctor_table_admin')
             else:
                 return HttpResponse("Bu ID zaten kullanımda!")
 
@@ -278,15 +280,16 @@ def create_doctor_admin(request):
                                     workplace = COALESCE(NULLIF(%s, ''), workplace),
                                     password = COALESCE(NULLIF(%s, ''), password) WHERE doctorID = %s""",
                                    [firstname, surname, specialty, workplace, password, id])
-                return redirect('table_doctor')
+                return redirect('doctor_table_admin')
 
-def delete_doctor(request):
+def delete_doctor_admin(request):
     if request.method == 'POST':
         doctor_id = request.POST.get('doctor_id')
         # SQL silme ifadesi
         with connection.cursor() as cursor:
             cursor.execute("DELETE FROM doctors WHERE doctorID = %s", [doctor_id])
-        return redirect('table_doctor')
+        return redirect('doctor_table_admin')
+
 
 def create_appointment_admin(request):
     if request.method == 'POST':
@@ -307,7 +310,7 @@ def create_appointment_admin(request):
                     cursor.execute("INSERT INTO appointment VALUES (%s, %s, %s, %s, %s)",
                                    [id, date, time, doctorid, patientid])
 
-                return redirect ('table_appointment')
+                return redirect ('appointment_table_admin')
             else:
                 return HttpResponse("Bu ID zaten kullanımda!")
 
@@ -322,12 +325,142 @@ def create_appointment_admin(request):
                                     doctorID = COALESCE(NULLIF(%s, ''), doctorID),
                                     patientID = COALESCE(NULLIF(%s, ''), patientID) WHERE appointmentID = %s""",
                                    [date, time, doctorid, patientid, id])
-                return redirect('table_appointment')
+                return redirect('appointment_table_admin')
 
-def delete_appointment(request):
+def delete_appointment_admin(request):
     if request.method == 'POST':
         appointment_id = request.POST.get('appointment_id')
         # SQL silme ifadesi
         with connection.cursor() as cursor:
             cursor.execute("DELETE FROM appointment WHERE appointmentID = %s", [appointment_id])
-        return redirect('table_appointment')
+        return redirect('appointment_table_admin')
+
+
+
+def report_table_patient(request):
+    patient_id = request.session.get('patient_id')
+    if patient_id is None:
+        return HttpResponse("Giriş yapmalısınız.")
+
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM report WHERE patientID = %s", [patient_id])
+        books = cursor.fetchall()
+    return render(request, 'page/report_table_patient.html', {'books': books})
+
+def create_report_patient(request):
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        id = request.POST.get('id')
+        date = request.POST.get('date')
+        link = request.POST.get('link')
+        tckn = request.session.get('patient_id')
+
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM report WHERE reportID = %s", [id])
+            row = cursor.fetchone()
+
+        if action == 'create_report':
+            if row is None:
+                with connection.cursor() as cursor:
+                    cursor.execute("INSERT INTO report VALUES (%s, %s, %s, %s)",
+                                   [id, date, link, tckn])
+
+                return redirect ('report_table_patient')
+            else:
+                return HttpResponse("Bu ID zaten kullanımda!")
+
+        elif action == 'update_report':
+            if row is None:
+                return HttpResponse("Bu ID bulunamadı")
+            else:
+                with connection.cursor() as cursor:
+                    cursor.execute("""UPDATE report SET 
+                                    date = COALESCE(NULLIF(%s, ''), date),
+                                    link = COALESCE(NULLIF(%s, ''), link),
+                                    patientID = COALESCE(NULLIF(%s, ''), patientID) WHERE reportID = %s""",
+                                   [date, link, tckn, id])
+                return redirect('report_table_patient')
+
+def delete_report_patient(request):
+    if request.method == 'POST':
+        report_id = request.POST.get('report_id')
+
+        with connection.cursor() as cursor:
+            cursor.execute("DELETE FROM report WHERE reportID = %s", [report_id])
+        return redirect('report_table_patient')
+
+
+def appointment_table_patient(request):
+    patient_id = request.session.get('patient_id')
+    if patient_id is None:
+        return HttpResponse("Giriş yapmalısınız.")
+
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM appointment WHERE patientID = %s", [patient_id])
+        books = cursor.fetchall()
+    return render(request, 'page/appointment_table_patient.html', {'books': books})
+
+def update_appointment_patient(request):
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        id = request.POST.get('id')
+        date = request.POST.get('date')
+        time = request.POST.get('time')
+
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM appointment WHERE appointmentID = %s", [id])
+            row = cursor.fetchone()
+
+        if action == 'update_appointment':
+            if row is None:
+                return HttpResponse("Bu ID bulunamadı")
+            else:
+                with connection.cursor() as cursor:
+                    cursor.execute("""UPDATE appointment SET 
+                                    date = COALESCE(NULLIF(%s, ''), date),
+                                    time = COALESCE(NULLIF(%s, ''), time) WHERE appointmentID = %s""",
+                                   [date, time, id])
+                return redirect('appointment_table_patient')
+
+def delete_appointment_patient(request):
+    if request.method == 'POST':
+        appointment_id = request.POST.get('appointment_id')
+
+        with connection.cursor() as cursor:
+            cursor.execute("DELETE FROM appointment WHERE appointmentID = %s", [appointment_id])
+        return redirect('appointment_table_patient')
+
+def doctor_table_patient(request):
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM doctors")
+        books = cursor.fetchall()
+    return render(request, 'page/appointment_make_patient.html', {'books': books})
+
+def doctor_select_patient(request):
+    if request.method == 'POST':
+        doctor_id = request.POST.get('doctor_id')
+        request.session['doctor_id'] = doctor_id
+        return render(request, 'page/appointment_info_patient.html')
+    else:
+        return HttpResponse("Bu URL sadece POST istekleriyle çalışır.")
+
+def create_appointment_patient(request):
+    if request.method == 'POST':
+        id = request.POST.get('id')
+        date = request.POST.get('date')
+        time = request.POST.get('time')
+        doctor_id = request.session.get('doctor_id')
+        patient_id = request.session.get('patient_id')
+
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM appointment WHERE appointmentID = %s", [id])
+            row = cursor.fetchone()
+
+        if row is None:
+            with connection.cursor() as cursor:
+                cursor.execute("INSERT INTO appointment VALUES (%s, %s, %s, %s, %s)",
+                               [id, date, time, doctor_id, patient_id])
+
+            return redirect ('patient_index')
+        else:
+            return HttpResponse("Bu ID zaten kullanımda!")
