@@ -1,4 +1,4 @@
-# Hospital_Web_Page
+# hospital-web-page
 
 I am designing a hospital website for users using django in python. 
 
